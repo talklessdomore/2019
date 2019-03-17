@@ -186,9 +186,9 @@ prepareBeanFactory(beanFactory);
 
 6.2对属性编辑器支持的两种方式：
 
-​	方式一：使用自定义属性编辑器，继承propertyEditorSupport,重写setText方法，然后注册到CustomerEditorConfigrer的customerEditors属性中。
+	方式一：使用自定义属性编辑器，继承propertyEditorSupport,重写setText方法，然后注册到CustomerEditorConfigrer的customerEditors属性中。
 
-​	方式二：使用spring知道的属性编辑器CustomerDateEditor,定义属性编辑器重写PropertyEditorRegistars中的注册方法registerCustomerEditors()注册到CustomerEditorConfigrer的propertyEditorRegistrars中。
+	方式二：使用spring知道的属性编辑器CustomerDateEditor,定义属性编辑器重写PropertyEditorRegistars中的注册方法registerCustomerEditors()注册到CustomerEditorConfigrer的propertyEditorRegistrars中。
 
 6.3添加applicationContextAwareProcessor处理器，就是将某些实现了***Aware的接口获取相应的资源。
 
@@ -196,3 +196,24 @@ prepareBeanFactory(beanFactory);
 
 6.5设置依赖注入
 
+6.6设置后处理器，对bean创建后和销毁前（ApplicationListenerDetector）
+
+6.7设置对aspectJ支持
+
+6.8设置一些系统环境参数
+
+7.对后处理器的应用
+
+BeanDefinitionRegistryPostProcessor是BeanFactoryPostProcessor子类，因为postProcessBeanDefinitionRegistry是用来创建bean定义的，而postProcessBeanFactory是修改BeanFactory，当然postProcessBeanFactory也可以修改bean定义的。
+
+```
+public interface BeanDefinitionRegistryPostProcessor extends BeanFactoryPostProcessor 
+```
+
+执行顺序：首先执行硬编码的后处理器，即beanFactory是registryBeanDefinition并且后处理器是BeanDefinitionRegistryPostProcessor
+
+​		   再获取容器中注册的类型是BeanDefinitionRegistryPostProcessor,按照priortity，order,普通类型执行
+
+​		   再执行容器中的beanPostProcessor按照priorituty,order,普通类型执行
+
+最后执行缓存中的后处理器。
